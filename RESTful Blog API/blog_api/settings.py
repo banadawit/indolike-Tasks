@@ -55,6 +55,13 @@ MIDDLEWARE = [
 ]
 # CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (Change in production)
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+
 ROOT_URLCONF = 'blog_api.urls'
 
 TEMPLATES = [
