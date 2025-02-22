@@ -1,8 +1,9 @@
-from django.db import models
 from rest_framework import serializers, viewsets, permissions
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
 from .models import Post
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 from .serializers import PostSerializer, UserSerializer
 from django.contrib.auth.models import User
 
@@ -35,5 +36,9 @@ class UserViewSet(viewsets.ModelViewSet):
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        token, created = Token.objects.get_or_create(user=request.user)
-        return Response({'token': token.key, 'user_id': request.user.id, 'username': request.user.username})
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user_id': user.id, 'username': user.username})
+
